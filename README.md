@@ -11,7 +11,7 @@ An example program can be found at https://github.com/devkitPro/wii-examples/tre
 
 # Isn't this part of libogc?
 
-Yes, it is. But the files in this repository are up-to-date with the latest addition I made, whereas the one from libogc is not.
+Yes, it is. But the files in this repository are up-to-date with the latest addition I made, whereas the ones from libogc are not.
 
 # Credits 
 
