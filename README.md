@@ -9,6 +9,10 @@ Add the two files above to your source code (DO NOT REMOVE THE COPYRIGHT NOTICE)
 
 An example program can be found at https://github.com/devkitPro/wii-examples/tree/wifi-example/devices/wifi.
 
+# DS Communications
+
+Comming soon...
+
 # Isn't this part of libogc?
 
 Yes, it is. But the files in this repository are up-to-date with the latest addition I made, whereas the ones from libogc are not.
