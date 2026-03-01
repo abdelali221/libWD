@@ -21,3 +21,6 @@ Yes, it is. But the files in this repository are up-to-date with the latest addi
 
 - Abdelali221 : Author of the homebrew implementation.
 - Dolphin-emu (leoetlino) : Data structures definitions.
+
+
+Software brought to you by Abdelali221.
