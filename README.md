@@ -15,7 +15,7 @@ Comming soon...
 
 # Isn't this part of libogc?
 
-Yes, it is. But the files in this repository are up-to-date with the latest addition I made, whereas the ones from libogc are not.
+Yes, it is. But the files in this repository are up-to-date with the latest additions I made, whereas the ones from libogc are not.
 
 # Credits 
 
