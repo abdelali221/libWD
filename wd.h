@@ -7,6 +7,7 @@
     
         - (C) 2025 - 2026 Abdelali221 (Author)
         - (C) 2008 Dolphin Emulator Project (For providing data structures)
+        - (C) 2013? tueidj
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -107,7 +108,20 @@ typedef struct WDInfo
     u8 channel;
     u8 initialized;
     u8 version[80];
-    u8 unknown[48];
+    struct WL_info {
+        u32 vid;
+        u32 pid;
+        u32 unk2;
+        u32 unk3;
+        u32 unk4;
+        u32 unk5;
+        u32 unk6;
+        u32 unk7;
+        u32 drv_ver;
+        u32 unk8;
+        u32 unk9;
+        u32 pid_2;
+    };
 } WDInfo;
 
 // Scan parameters :
@@ -185,6 +199,85 @@ typedef struct IE_RSN_WPA
 
     u16 PMKID_Count;
 } IE_RSN_WPA;
+
+typedef struct WD_Privacy//When verified, only the mode and keyId/keyLen are verified. Size 72 bytes.
+{
+	u16 mode;//0 = None, 1 = WEP40, 2 = WEP104, 3 = invalid mode, 4 = WPA-PSK(TKIP), 5 = WPA2-PSK(AES), 6 = WPA-PSK(AES)
+	u16 unk;
+
+	union//mode and keyId/keyLen are verified when flags0 bit 20 is set.
+	{
+		//mode 0 is none.
+		struct//mode 1
+		{
+			u16 keyId;//Must be less than 4.
+            u8 key[4][5];
+		}wep40;
+
+		struct//mode 2
+		{
+			u16 keyId;//Must be less than 4.
+            u8 key[4][13];
+		}wep104;
+
+		//mode 3 is an invalid mode.
+		struct//mode 5/6
+		{
+			u16 keyLen;//Must be in range 8-64.
+            u8 key[64];
+		}aes;
+
+		struct//mode 4
+		{
+			u16 keyLen;//Must be in range 8-64.
+            u8 key[64];
+		}tkip;
+	};
+
+	u8 unkpriva1[2];
+} WD_Privacy;
+
+// WD_Config
+
+typedef struct WD_Config//size 384 bytes.
+{
+	u16 diversityMode;    //flags0 bit 0. Antenna diversity. Can't be greater than 1. Debug for 0: "OFF, use a antenna MAIN", debug for 1: "OFF, use a antenna SUB".
+	u16 useAntenna;    //flags0 bit 1. Must be less than 2; 0 or 1.
+	u16 shortRetryLimit;    //flags0 bit 2. Must be no larger than 255.
+	u16 longRetryLimit;    //flags0 bit 3. Must be no larger than 255.
+	u16 unk4;    //flags0 bit 4.
+	u16 rtsThreshold;    //flags0 bit 5. Must be greater than 0.
+	u16 fragThreshold;    //flags0 bit 6. Must be greater than 0.
+	u16 supportRateSet;    //flags0 bit 7. First 20 bits must not be all zero.
+	u16 basicRateSet;    //flags0 bit 8. First 20 bits must not be all zero.
+	u16 enable_channel;    //? flags0 bit 9. Current channel?
+
+        struct
+        {
+	        wd_privacy essSta_privacy;    //flags0 bit 20.
+
+	        char ssid[32];    //? flags0 bit 16.
+	        u8 unka2[32];    //flags0 bit 17.
+	        u8 ssidLength;    //flags0 bit 18. must be less than 33.
+	        u8 unka;    //flags0 bit 21, not checked.
+	        u16 maxChannelTime;    //flags0 bit 19. Must not be less than 1000.
+	        u8 bssid[6];    //?
+	        u8 somemac[6];    //?
+        } essSta;    //Infrastructure?
+
+        struct
+        {
+	        u16 connectionTimeout;    //flags 1 fields start here. Must be larger than 0.
+	        u16 beaconPeriod;    //Must be greater than 1000.
+	        u8 maxNodes;    //Must be less than 16.
+	        u8 authAlgorithm;    //Must be less than 2. 0 = Open, 1 = Shared.
+	        u16 beacon_nintagtimestamp;    //? bit 4 of flags 1 fields.
+	        u8 channel;    //Not verified if 0, but when non-zero, must be an available Nitro Allowed Channel. See _wd_info.ntr_allowed_channels.
+	        u8 unka4[3];
+		u8 beacon_nintagdata[128];
+              WD_Privacy mpParent_privacy;    //Mode 3, tkip, and aes crypto modes are removed, leaving only modes none, WEP40, and WEP104.
+        } mpParent;    //Master mode?
+} WD_Config;
 
 // General Purpose :
 
