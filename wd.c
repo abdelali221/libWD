@@ -3,7 +3,9 @@
     wd.c -- Wireless Driver Implementation.
     This file is part of https://github.com/abdelali221/libWD
 
-    Copyright (C) 2025 - 2026 Abdelali221
+    Copyright : 
+        - (C) 2025 - 2026 Abdelali221
+        - (C) 2013? tueidj
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +25,7 @@
 #if defined(HW_RVL)
 
 #include "wd.h"
-#include "ipc.h"
+#include <ogc/ipc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <gccore.h>
@@ -425,6 +427,47 @@ u8 WD_GetSecurity(BSSDescriptor *Bss) {
     if(!ret) return WD_WEP;
     
     return ret;
+}
+
+s32 WD_GetConfig(void *config, u64 flags)
+{
+	ioctlv vector[3];
+	s32 result;
+
+	if (config == NULL)
+		return WD_INVALIDBUF;
+
+    vector[0].data = config;
+    vector[0].len = 0x180;
+
+    vector[2].data = config;
+    vector[2].len = 0x180;
+
+    vector[1].data = &flags;
+    vector[1].len = 8;
+
+    result = IOS_Ioctlv(wd_fd, 2, 1, vector);
+
+	return result;
+}
+
+s32 WD_SetConfig(void *config, u64 flags)
+{
+	ioctlv vector[3];
+	s32 result;
+
+	if (config == NULL)
+		return WD_INVALIDBUF;
+
+    vector[0].data = config;
+    vector[0].len = 0x180;
+
+    vector[1].data = &flags;
+    vector[1].len = 8;
+
+    result = IOS_Ioctlv(wd_fd, 2, 0, vector);
+
+	return result;
 }
 
 #endif
